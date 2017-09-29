@@ -51,18 +51,21 @@ raw::~raw()
 // the array is filled with std::complex zero
 void raw::set_zero()
 {
+    std::complex<double> u(0,0);
+    for(int i=0;  i<nn;    i++)    y[i] = u;
 
 }
 
 void raw::set_real(double numb)
 {
-
-
+    std::complex<double> u(numb,0);
+    for(int i=0;  i<nn;    i++)    y[i] = u;
 }
 
 void raw::set_imag(double numb)
 {
-
+    std::complex<double> u(0,numb);
+    for(int i=0;  i<nn;    i++)    y[i] = u;
 }
 
 // The initializer of FERMI-DIRAC distribution
