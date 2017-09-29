@@ -214,25 +214,25 @@ void AWT::output(std::string name, all_t all)
     int control = 0;
 
     // x coordinate of maximum range is calculated
-    int limit = all.n * all.range / all.xMax;
+    int limit = all.n * all.disp_range / all.x_max;
 
 
     // output of y values in the form of a function is selected
     if(all.output_mode == "raw")
     {
         // first the negative values are printed
-        for(int i=all.nn-limit;   i<all.nn;     i += all.display)
+        for(int i=all.nn-limit;   i<all.nn;     i += all.disp_range)
         {
-            output << (i-all.nn)* all.xMax/n << "  "
-                   << all.mult * real(y[i]) << "  "
-                   << all.mult * imag(y[i]) << "  "
+            output << (i-all.nn)* all.x_max/n << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
                    << std::endl;
         }
-        for(        int i=0;      i<limit;      i += all.display)
+        for(        int i=0;      i<limit;      i += all.disp_range)
         {
-            output << i * all.xMax/all.n << "  "
-                   << all.mult * real(y[i]) << "  "
-                   << all.mult * imag(y[i]) << "  "
+            output << i * all.x_max/all.n << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
                    << std::endl;
         }
         control += 1;
@@ -242,11 +242,11 @@ void AWT::output(std::string name, all_t all)
     if(all.output_mode == "awt")
     {
         // the whole AWT with zero padding is outputed
-        for(int i = 0;   i<all.nn;     i += all.display)
+        for(int i = 0;   i<all.nn;     i += all.disp_range)
         {
             output << i << "  "
-                   << all.mult * real(y[i]) << "  "
-                   << all.mult * imag(y[i]) << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
                    << std::endl;
         }
         control += 1;
@@ -256,18 +256,18 @@ void AWT::output(std::string name, all_t all)
     if(all.output_mode == "dft")
     {
         // first the negative values are printed
-        for(int i=all.nn-limit;   i<all.nn;     i += all.display)
+        for(int i=all.nn-limit;   i<all.nn;     i += all.disp_range)
         {
-            output << (i-all.nn)* all.xMax/n << "  "
-                   << all.mult * real(yDFT[i]) << "  "
-                   << all.mult * imag(yDFT[i]) << "  "
+            output << (i-all.nn)* all.x_max/n << "  "
+                   << all.disp_mult * real(yDFT[i]) << "  "
+                   << all.disp_mult * imag(yDFT[i]) << "  "
                    << std::endl;
         }
-        for(        int i=0;      i<limit;      i += all.display)
+        for(        int i=0;      i<limit;      i += all.disp_range)
         {
-            output << i * all.xMax/all.n << "  "
-                   << all.mult * real(yDFT[i]) << "  "
-                   << all.mult * imag(yDFT[i]) << "  "
+            output << i * all.x_max/all.n << "  "
+                   << all.disp_mult * real(yDFT[i]) << "  "
+                   << all.disp_mult * imag(yDFT[i]) << "  "
                    << std::endl;
         }
         control += 1;
@@ -279,8 +279,29 @@ void AWT::output(std::string name, all_t all)
 }
 
 
-void AWT::conjugate()
+
+void AWT::set_copy(AWT & inX)
 {
-    double a = 0;
+    if(n != inX.n)
+    {
+        std::cerr << "cannot set AWT to another AWT: incompatible mesh!" << std::endl;
+        exit(1);
+    }
+
+    for(int i = 0;   i<inX.nn;     i += 1)
+    {
+        y[i] = inX.y[i];
+    }
 }
+
+void AWT::conjugate_y(AWT & inX)
+{
+    std::cout << "conjugated y of awt " << std::endl;
+}
+
+void AWT::conjugate_dft(AWT & inX)
+{
+    std::cout << "conjugated dft of awt" << std::endl;
+}
+
 

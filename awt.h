@@ -47,6 +47,8 @@ class AWT: public base_array
 
         ////////////////  SET AWTs  ///////////////////////////
         void output(std::string, all_t);
+        void set_copy(AWT &);
+
         void set_zero();
         void set_real(double);
         void set_imag(double);
@@ -55,10 +57,9 @@ class AWT: public base_array
         void set_BE();
         void set_K3();
 
-        void set_values(int, int, double, double);
+        void conjugate_y(AWT &);
+        void conjugate_dft(AWT &);
 
-
-        void conjugate();
 
 
 

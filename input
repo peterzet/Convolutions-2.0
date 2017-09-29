@@ -27,7 +27,7 @@ Txt output parameters
 
 display:       1 
 range:         10 
-print mode:    0 
+print mode:    no 
 string mode:   cx11
 output mode:   raw
 physics:       EFF_freq

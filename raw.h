@@ -22,14 +22,14 @@
 class raw: public base_array
 {
     protected:
-        raw();
-        ~raw();
-        void init_raw(int, double, double);
 
 
 
 
     public:
+        raw();
+        ~raw();
+
 
         void init(int, double, double);
 
@@ -41,10 +41,9 @@ class raw: public base_array
         void set_imag(double);
 
         void set_FD();
-        void set_BE();
         void set_K3();
 
-        void conjugate();
+
 
         // operations changing existing values
 

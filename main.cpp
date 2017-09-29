@@ -23,14 +23,17 @@
                             // random number generation, communication with the environment,
                             // integer arithmetics, searching, sorting and converting
 #include <fftw3.h>          // FFTW library
-#include <fstream>          // standard library for showing outputs
+
 
 #include <iostream>         // standard library for reading inputs
+#include <sstream>
+#include <fstream>          // standard library for showing outputs
 
 #include <string>           // standard library for manipultaing std::strings
-#include <sstream>
 #include <vector>
-#include <iomanip> // setprecision
+#include <complex>
+
+#include <iomanip>          // setprecision
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
@@ -45,9 +48,27 @@ int main()
 {
     // the name of the file to import desired definitions and values
     std::string name = "input";
+    all_t params;
+    initialize_parameters(params, name);
 
-    // structure that holds all variables that need to be inputed
-    all_t all;
+    std::cout << params.n << std::endl;
+
+    AWT A;
+    A.init(params.n,params.x_max,params.kT_min);
+    A.conjugate_y(A);
+    A.set_imag(1.0);
+    A.conjugate_y(A);
+
+
+    AWT AA;
+    AA.init(2,2,params.kT_min);
+    AA.set_copy(A);
+
+
+
+    raw B;
+    B.init(10,2,0);
+    B.conjugate_y();
 
     // function that imports all the desired initial definitions and values
     //import_initial(name, all);

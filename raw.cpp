@@ -33,12 +33,13 @@ void raw::init(int _n, double _xMax, double _kT)
     xMax = _xMax;               // <-xMax, xMax> is the interval on which the function is defined
     kT = _kT;
 
-    //y.resize(2*n+1);
+    y    = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
+    yDFT = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
 
 
     // we always initialize the function as constant zero
     std::complex<double> u(0,0);
-    for(int i=0; i < 2*n+1; i++)    y[i] = u;
+    for(int i=0; i < nn; i++)    y[i] = u;
 }
 
 raw::~raw()
@@ -70,10 +71,7 @@ void raw::set_FD()
 
 }
 
-void raw::set_BE()
-{
 
-}
 
 // Kernel3 for KRAMMERS KRONIG
 void raw::set_K3()
@@ -104,7 +102,7 @@ void raw::output(std::string name, all_t all)
     int control = 0;
 
     // x coordinate of maximum range is calculated
-    int limit = all.n * all.range / all.xMax;
+    int limit = all.n * all.disp_range / all.x_max;
 
 
     // output of y values in the form of a function is selected
@@ -131,10 +129,5 @@ void raw::output(std::string name, all_t all)
     // if output was successfull control equals to one
     if(control != 1)        std::cout << "output of " << name << " was not successful" << std::endl;
 
-}
-
-void raw::conjugate()
-{
-    double a = 0;
 }
 
