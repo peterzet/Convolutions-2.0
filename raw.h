@@ -1,3 +1,13 @@
+/////////////////////////////////////////////////////////////////////////////////
+//
+//      raw is an array class to store function from -|x_max| to +|x_max|
+//      0th element contains value of the function at -|x_max|
+//      last element contains value of the function at +|x_max|
+//      elements between contain function values in the corresponding sequence
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
 #ifndef RAWFUNCTION_H
 #define RAWFUNCTION_H
 
