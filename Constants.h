@@ -10,9 +10,11 @@
 
 #include <boost/lexical_cast.hpp>
 
+
+// constants
 const double Pi = 3.14159265359;
 
-enum class exp_mode_t: int  {EXP_RAW = 0, EXP_AWT = 1, EXP_DFT = 2};
+
 
 // structure that holds all variables that are externally inputed
 struct all_t {     double delta, mu, kT_min, kT_increment, kT_max, U_min, U_increment, U_max, mu_min, mu_increment, mu_max, x_max, disp_range, disp_mult;
@@ -20,14 +22,19 @@ struct all_t {     double delta, mu, kT_min, kT_increment, kT_max, U_min, U_incr
               std::string model, print_mode, string_mode, output_mode, physics;
              };
 
+
+// structure that holds only mesh export properties
+struct exp_prop_t {int n; double xMax; double kT; int div; double range; double mult; std::string mode; };
+
+// structure that holds only basic mesh properties
+struct array_prop_t {int n; double xMax; double kT; };
+
+
+
+// function to import initial parameters of the mesh and the physical model as well
 void initialize_parameters(all_t &, std::string);
 
 
-// only variables with export properties
-struct exp_prop_t {int n; double xMax; double kT; int div; double range; double mult; std::string mode; };
-
-// only variables with array properties
-struct array_prop_t {int n; double xMax; double kT; };
 
 
 #endif // CONSTANTS_H
