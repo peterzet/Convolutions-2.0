@@ -53,6 +53,7 @@ class raw: public base_array
         void set_FD();
         void set_BE();
         void set_K3();
+        void set_copy(raw &);
 
 
 

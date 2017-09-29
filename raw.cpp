@@ -107,7 +107,6 @@ void raw::set_BE()
 void raw::set_K3()
 {
 
-
 }
 
 
@@ -160,4 +159,29 @@ void raw::output(std::string name, all_t all)
     if(control != 1)        std::cout << "output of " << name << " was not successful" << std::endl;
 
 }
+
+void raw::set_copy(raw & inX)
+{
+
+    // checking if mesh properties are the sameint compatibility = 1;
+    int compatibility;
+    if(n != inX.n)
+    {
+        std::cerr << "cannot set raw to another raw: incompatible number of mesh points!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(xMax != inX.xMax)
+    {
+        std::cerr << "cannot set raw to another raw: incompatible range of the functions!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(compatibility != 1)    exit(1);
+
+    // actual reading in of the data
+    for(int i = 0;   i<inX.nn;     i += 1)  y[i] = inX.y[i];
+
+}
+
 

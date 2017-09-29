@@ -282,16 +282,25 @@ void AWT::output(std::string name, all_t all)
 
 void AWT::set_copy(AWT & inX)
 {
+    // checking if mesh properties are the same
+    int compatibility = 1;
     if(n != inX.n)
     {
-        std::cerr << "cannot set AWT to another AWT: incompatible mesh!" << std::endl;
-        exit(1);
+        std::cerr << "cannot set AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        compatibility -= 1;
     }
 
-    for(int i = 0;   i<inX.nn;     i += 1)
+    if(xMax != inX.xMax)
     {
-        y[i] = inX.y[i];
+        std::cerr << "cannot set AWT to another AWT: incompatible range of the functions!" << std::endl;
+        compatibility -= 1;
     }
+
+    if(compatibility != 1)    exit(1);
+
+    // actual reading in of the data
+    for(int i = 0;   i<inX.nn;     i += 1)      y[i] = inX.y[i];
+
 }
 
 void AWT::conjugate_y(AWT & inX)
