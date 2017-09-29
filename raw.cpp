@@ -65,13 +65,40 @@ void raw::set_imag(double numb)
 
 }
 
-// The initializer of FERMI-DIRAC and BOSE-EINSTEIN distribution
+// The initializer of FERMI-DIRAC distribution
 void raw::set_FD()
 {
-
+    if( kT == 0 )
+    {
+        for(int i=0;     i<n;   i++)     y[i] = 1.0;
+                                         y[n] = 0.5;
+        for(int i=n+1;  i<nn;   i++)     y[i] = 0;
+    }
+    else
+    {
+        for(int i=0;     i<n;    i++)    y[i] = 1.0/( exp( (i - n) * xMax/ (n * kT)  ) + 1 );
+                                         y[n] = 0.5;
+        for(int i=n+1;  i<nn;    i++)    y[i] = 1.0/( exp( (i - n) * xMax / (n *kT)  ) + 1 );
+    }
 }
 
 
+// The initializer of BOSE-EINSTEIN distribution
+void raw::set_BE()
+{
+    if( kT == 0 )
+    {
+        for(int i=0;     i<n;   i++)     y[i] = 1.0;
+                                         y[n] = 0.5;
+        for(int i=n+1;  i<nn;   i++)     y[i] = 0;
+    }
+    else
+    {
+        for(int i=0;     i<n;    i++)    y[i] = 1.0/( exp( (i - n) * xMax/ (n * kT)  ) - 1 );
+                                         y[n] = 0.5;
+        for(int i=n+1;  i<nn;    i++)    y[i] = 1.0/( exp( (i - n) * xMax / (n *kT)  ) - 1 );
+    }
+}
 
 // Kernel3 for KRAMMERS KRONIG
 void raw::set_K3()
