@@ -21,24 +21,34 @@
 
 base_array::base_array()
 {
-    init(0, 0, 0);
+    #ifdef CALL
+        std::cout << "Constructor of virtual base" << std::endl;
+    #endif // OLD
 }
-
 
 void base_array::init(int _n, double _xMax, double _kT)
 {
-    // these are the basic para,eters of the function
-    n    = _n;                  // 2*n + 1 is the number of the mesh points
-    nn   = 2 * n + 1;
-    xMax = _xMax;               // <-xMax, xMax> is the interval on which the function is defined
-    kT = _kT;
-
+    std::cout << "Call from virtual base class base_array: no implementation of initialize" << std::endl;
 }
 
 base_array::~base_array()
 {
-    //dtor
+    #ifdef CALL
+        std::cout << "Destructor of virtual base" << std::endl;
+    #endif // OLD
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                                    OUTPUT FUNCTIONS                                             ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void base_array::output(std::string name, all_t & all)
+{
+    std::cout << "Call from virtual base class base_array: no implementation of output" << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                                     SET FUNCTIONS                                               ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // the array is filled with std::complex zero
 void base_array::set_zero()
@@ -74,19 +84,9 @@ void base_array::set_K3()
 }
 
 
-
-void base_array::output(std::string name, all_t all)
-{
-    std::cout << "Call from virtual base class base_array: no implementation of output" << std::endl;
-}
-
-
-void base_array::set_copy()
-{
-    std::cout << "Call from virtual base class base_array: no implementation of set_copy" << std::endl;
-}
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                               FUNCTIONS CHANGING ARRAYS                                         ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void base_array::conjugate_y()
 {
     std::cout << "Call from virtual base class base_array: no implementation of conjugate_y" << std::endl;
@@ -95,6 +95,24 @@ void base_array::conjugate_y()
 void base_array::conjugate_dft()
 {
     std::cout << "Call from virtual base class base_array: no implementation of conjugate_y" << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                                     COPY FUNCTIONS                                              ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void base_array::copy_all()
+{
+    std::cout << "Call from virtual base class base_array: no implementation of set_copy" << std::endl;
+}
+
+void base_array::copy_real()
+{
+    std::cout << "Call from virtual base class base_array: no implementation of delete_real" << std::endl;
+}
+
+void base_array::copy_imag()
+{
+    std::cout << "Call from virtual base class base_array: no implementation of delete_imag" << std::endl;
 }
 
 
