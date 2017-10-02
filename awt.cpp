@@ -21,8 +21,7 @@
 
 ////////////////    SELECTING FFTW algorithm     /////////////////
 
-#define CX11
-// #define OLD
+
 
 #define FFTW_METHOD FFTW_ESTIMATE           // instead of actual measurements of different algorithms,
                                             // a simple heuristic is used to pick a (probably sub-optimal)
@@ -33,7 +32,14 @@
 // #define FFTW_METHOD FFTW_EXHAUSTIVE
 
 // Formal constructor of AWT
-AWT::AWT(){    init(0, 0, 0);}
+AWT::AWT()
+{
+    #ifdef CALL
+        std::cout << "constructing AWT" << std::endl;
+    #endif // OLD
+
+    init(0, 0, 0);
+}
 
 // The initializer of AWT
 void AWT::init(int _n, double _x, double _kT)
@@ -52,22 +58,31 @@ void AWT::init(int _n, double _x, double _kT)
         std::cerr << "insufficient memory!" << std::endl;  // std::cerr
         exit(1);
     }
+
     // data is allocated, the argument of fftw_malloc defines the size of the input array as nnDFT = 4*n +4
     yINTER = (fftw_complex *) fftw_malloc(nn * sizeof(fftw_complex));
+
     // this informs you whenever there is no space to store yDFT
     if(yINTER == NULL)
     {
         std::cerr << "insufficient memory!" << std::endl;
         exit(1);
     }
-    // ASK!!!!, it is probably required because of variable type mismatch
+
+    //required because of variable type mismatch
     yDFT = (std::complex<double> *) yINTER;
+
     // A plan forwardFFT is created for forward fast Fourier transform
     forwardFFT  = fftw_plan_dft_1d(nn, (fftw_complex *) y, (fftw_complex *) yDFT, FFTW_FORWARD, FFTW_METHOD | FFTW_PRESERVE_INPUT);
+
     // A plan fbackwardFFT is created forbackward fast Fourier transform
     backwardFFT = fftw_plan_dft_1d(nn, (fftw_complex *) yDFT, (fftw_complex *) y, FFTW_BACKWARD, FFTW_METHOD | FFTW_PRESERVE_INPUT);
 
     dftKnown = false;
+
+    #ifdef CALL
+        std::cout << "initializing AWT" << std::endl;
+    #endif // OLD
 }
 
 
@@ -78,6 +93,10 @@ AWT::~AWT()
     fftw_free(yINTER);
     fftw_destroy_plan(forwardFFT);
     fftw_destroy_plan(backwardFFT);
+
+    #ifdef CALL
+        std::cout << "destructing AWT" << std::endl;
+    #endif // OLD
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,6 +124,192 @@ void AWT::backwardDFT()
 }
 
 //////////////////////////////////////////////////////////////////////
+/////////////            OUTPUT AWTs           //////////////////////
+////////////////////////////////////////////////////////////////////
+void AWT::output(std::string name, all_t & all)
+{
+    // output stream file is open according to old standard
+    #ifdef OLD
+        std::ofstream output(name.c_str());
+    #endif // OLD
+    // output stream file is open according to cx11 standard
+    #ifdef CX11
+        std::ofstream output;
+        output.open(name);
+    #endif // CX11
+
+    int nn           = 4*all.n + 4;
+
+    // counter to ensure that writting was successful
+    int control = 0;
+
+    // x coordinate of maximum range is calculated
+    int limit = all.n * all.disp_range / all.x_max;
+
+
+    // output of y values in the form of a function is selected
+    if(all.output_mode == "raw")
+    {
+        // first the negative values are printed
+        for(int i=nn-limit;   i<nn;     i += all.disp_range)
+        {
+            output << (i-nn)* all.x_max/n << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
+                   << std::endl;
+        }
+        for(        int i=0;      i<limit;      i += all.disp_range)
+        {
+            output << i * all.x_max/all.n << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
+                   << std::endl;
+        }
+        control += 1;
+    }
+
+    // output of y values in the AWT form is selected
+    if(all.output_mode == "awt")
+    {
+        // the whole AWT with zero padding is outputed
+        for(int i = 0;   i<nn;     i += all.disp_range)
+        {
+            output << i << "  "
+                   << all.disp_mult * real(y[i]) << "  "
+                   << all.disp_mult * imag(y[i]) << "  "
+                   << std::endl;
+        }
+        control += 1;
+    }
+
+    // output of DFT values is selected
+    if(all.output_mode == "dft")
+    {
+        // first the negative values are printed
+        for(int i=nn-limit;   i<nn;     i += all.disp_range)
+        {
+            output << (i-nn)* all.x_max/n << "  "
+                   << all.disp_mult * real(yDFT[i]) << "  "
+                   << all.disp_mult * imag(yDFT[i]) << "  "
+                   << std::endl;
+        }
+        for(        int i=0;      i<limit;      i += all.disp_range)
+        {
+            output << i * all.x_max/all.n << "  "
+                   << all.disp_mult * real(yDFT[i]) << "  "
+                   << all.disp_mult * imag(yDFT[i]) << "  "
+                   << std::endl;
+        }
+        control += 1;
+    }
+
+    // if output was successfull control equals to one
+    if(control != 1)
+    {
+        std::cout << "output of " << name << " was not successful" << std::endl;
+        output << "Did you define the output_mode in the input file correctly?" << std::endl;
+    }
+
+}
+
+//////////////////////////////////////////////////////////////////////
+/////////////              COPY AWTs            /////////////////////
+////////////////////////////////////////////////////////////////////
+
+// the array is filled with std::complex zero
+
+void AWT::copy_all(AWT & inX)
+{
+    // checking if mesh properties are the same
+    int compatibility = 1;
+    if(n != inX.n)
+    {
+        std::cerr << "cannot set AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(xMax != inX.xMax)
+    {
+        std::cerr << "cannot set AWT to another AWT: incompatible range of the functions!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(compatibility != 1)
+    {
+        std::cout << "could not copy the AWT!" << std::endl;
+        exit(1);
+    }
+
+    // actual copying of the data
+    for(int i = 0;   i<inX.nn;     i += 1)      y[i] = inX.y[i];
+
+}
+
+// real part is copied
+void AWT::copy_real(AWT & inX)
+{
+        // checking if mesh properties are the same
+    int compatibility = 1;
+    if(n != inX.n)
+    {
+        std::cerr << "cannot copy AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(xMax != inX.xMax)
+    {
+        std::cerr << "cannot copy AWT to another AWT: incompatible range of the functions!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(compatibility != 1)
+    {
+        std::cout << "could not copy the AWT!" << std::endl;
+        exit(1);
+    }
+
+    // actual copying of the data
+    for(int i=0; i < nn; i++)
+    {
+        std::complex<double> u(0, imag(inX.y[i]) );
+        y[i]= u;
+    }
+    dftKnown = false;
+}
+
+// imag part is copied
+void AWT::copy_imag(AWT & inX)
+{
+        // checking if mesh properties are the same
+    int compatibility = 1;
+    if(n != inX.n)
+    {
+        std::cerr << "cannot copy AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(xMax != inX.xMax)
+    {
+        std::cerr << "cannot copy AWT to another AWT: incompatible range of the functions!" << std::endl;
+        compatibility -= 1;
+    }
+
+    if(compatibility != 1)
+    {
+        std::cout << "could copy copy the AWT!" << std::endl;
+        exit(1);
+    }
+
+    // actual copying of the data
+    for(int i=0; i < nn; i++)
+    {
+        std::complex<double> u(real(inX.y[i]), 0);
+        y[i]= u;
+    }
+    dftKnown = false;
+}
+
+//////////////////////////////////////////////////////////////////////
 /////////////              SET AWTs            //////////////////////
 ////////////////////////////////////////////////////////////////////
 
@@ -117,7 +322,7 @@ void AWT::set_zero()
 
 void AWT::set_real(double numb)
 {
-    std::complex<double> u(numb,0);
+    std::complex<double> u(numb, 0);
     for(int i=0;     i<=n; i++)      y[i] = u;
     for(int i=n+1; i<nn-n; i++)      y[i] = 0;
     for(int i=nn-n;  i<nn; i++)      y[i] = u;
@@ -126,13 +331,13 @@ void AWT::set_real(double numb)
 
 void AWT::set_imag(double numb)
 {
-    std::complex<double> u(0,numb);
+    std::complex<double> u(0, numb);
     for(int i=0;     i<=n; i++)      y[i] = u;
     for(int i=n+1; i<nn-n; i++)      y[i] = 0;
     for(int i=nn-n;  i<nn; i++)      y[i] = u;
 }
 
-// The initializer of FERMI-DIRAC and BOSE-EINSTEIN distribution
+// FERMI-DIRAC distribution
 void AWT::set_FD()
 {
     if( kT == 0 )
@@ -150,6 +355,7 @@ void AWT::set_FD()
     }
 }
 
+// BOSE-EINSTEIN distribution
 void AWT::set_BE()
 {
     if( kT == 0 )
@@ -194,123 +400,19 @@ void AWT::set_K3()
 }
 
 
-
-
-void AWT::output(std::string name, all_t all)
-{
-    // output stream file is open according to old standard
-    #ifdef OLD
-        std::ofstream output(name.c_str());
-    #endif // OLD
-    // output stream file is open according to cx11 standard
-    #ifdef CX11
-        std::ofstream output;
-        output.open(name);
-    #endif // CX11
-
-    all.nn           = 4*all.n + 4;
-
-    // counter to ensure that writting was successful
-    int control = 0;
-
-    // x coordinate of maximum range is calculated
-    int limit = all.n * all.disp_range / all.x_max;
-
-
-    // output of y values in the form of a function is selected
-    if(all.output_mode == "raw")
-    {
-        // first the negative values are printed
-        for(int i=all.nn-limit;   i<all.nn;     i += all.disp_range)
-        {
-            output << (i-all.nn)* all.x_max/n << "  "
-                   << all.disp_mult * real(y[i]) << "  "
-                   << all.disp_mult * imag(y[i]) << "  "
-                   << std::endl;
-        }
-        for(        int i=0;      i<limit;      i += all.disp_range)
-        {
-            output << i * all.x_max/all.n << "  "
-                   << all.disp_mult * real(y[i]) << "  "
-                   << all.disp_mult * imag(y[i]) << "  "
-                   << std::endl;
-        }
-        control += 1;
-    }
-
-    // output of y values in the AWT form is selected
-    if(all.output_mode == "awt")
-    {
-        // the whole AWT with zero padding is outputed
-        for(int i = 0;   i<all.nn;     i += all.disp_range)
-        {
-            output << i << "  "
-                   << all.disp_mult * real(y[i]) << "  "
-                   << all.disp_mult * imag(y[i]) << "  "
-                   << std::endl;
-        }
-        control += 1;
-    }
-
-    // output of DFT values is selected
-    if(all.output_mode == "dft")
-    {
-        // first the negative values are printed
-        for(int i=all.nn-limit;   i<all.nn;     i += all.disp_range)
-        {
-            output << (i-all.nn)* all.x_max/n << "  "
-                   << all.disp_mult * real(yDFT[i]) << "  "
-                   << all.disp_mult * imag(yDFT[i]) << "  "
-                   << std::endl;
-        }
-        for(        int i=0;      i<limit;      i += all.disp_range)
-        {
-            output << i * all.x_max/all.n << "  "
-                   << all.disp_mult * real(yDFT[i]) << "  "
-                   << all.disp_mult * imag(yDFT[i]) << "  "
-                   << std::endl;
-        }
-        control += 1;
-    }
-
-    // if output was successfull control equals to one
-    if(control != 1)        std::cout << "output of " << name << " was not successful" << std::endl;
-
-}
-
-
-
-void AWT::set_copy(AWT & inX)
-{
-    // checking if mesh properties are the same
-    int compatibility = 1;
-    if(n != inX.n)
-    {
-        std::cerr << "cannot set AWT to another AWT: incompatible number of mesh points!" << std::endl;
-        compatibility -= 1;
-    }
-
-    if(xMax != inX.xMax)
-    {
-        std::cerr << "cannot set AWT to another AWT: incompatible range of the functions!" << std::endl;
-        compatibility -= 1;
-    }
-
-    if(compatibility != 1)    exit(1);
-
-    // actual reading in of the data
-    for(int i = 0;   i<inX.nn;     i += 1)      y[i] = inX.y[i];
-
-}
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                               FUNCTIONS CHANGING ARRAYS                                         ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AWT::conjugate_y(AWT & inX)
 {
-    std::cout << "conjugated y of awt " << std::endl;
+    for(int i = 0;      i<n;    i++)      y[i]  =  conj(inX.y[i]);
+    for(int i = 3*n+4;  i<nn;   i++)      y[i]  =  conj(inX.y[i]);
 }
 
 void AWT::conjugate_dft(AWT & inX)
 {
-    std::cout << "conjugated dft of awt" << std::endl;
+    for(int i = 0;      i<n;    i++)      yDFT[i]  =  conj(inX.yDFT[i]);
+    for(int i = 3*n+4;  i<nn;   i++)      yDFT[i]  =  conj(inX.yDFT[i]);
 }
 
 

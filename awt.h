@@ -33,10 +33,9 @@ class AWT: public base_array
 
         // n, nn, xMax, kT are inherited from base
 
-        /////////////   MEMBERS   //////////////////////////////////////////////////////
-        fftw_complex * yINTER;    // DFT of y
 
         ////////////////  FOURIER TRANSFORMs  ////////////////////////////////////////////
+        fftw_complex * yINTER;    // DFT of y
         fftw_plan forwardFFT;
         fftw_plan backwardFFT;
 
@@ -44,11 +43,15 @@ class AWT: public base_array
         void backwardDFT();       // constructor of an empty function backwardDFT
 
 
+        //////////////  OUTPUT AWTs  ///////////////////////////
+        void output(std::string, all_t& );
 
-        ////////////////  SET AWTs  ///////////////////////////
-        void output(std::string, all_t);
-        void set_copy(AWT &);
+        /////////////// COPY AWTs   //////////////////////////
+        void  copy_all(AWT &);
+        void copy_real(AWT &);
+        void copy_imag(AWT &);
 
+        /////////////// SET AWTs    //////////////////////////
         void set_zero();
         void set_real(double);
         void set_imag(double);
@@ -57,14 +60,9 @@ class AWT: public base_array
         void set_BE();
         void set_K3();
 
+        /////////////// OPERATIONS on AWTs   /////////////////
         void conjugate_y(AWT &);
         void conjugate_dft(AWT &);
-
-
-
-
-
-
 };
 
 #endif // AWT_H
