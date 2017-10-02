@@ -20,7 +20,7 @@ void initialize_parameters(all_t & all, std::string name)
 
     if (ListFile.fail()) {std::cerr<< "Error opening the file" << std::endl; exit(1);}
 
-    for(int i=0; i<58; i++)
+    for(int i=0; i<61; i++)
     {
         ListFile >> item;
 
@@ -52,10 +52,51 @@ void initialize_parameters(all_t & all, std::string name)
         if(i == 58)  all.output_mode  = boost::lexical_cast<std::string>(item);
         if(i == 60)  all.physics      = boost::lexical_cast<std::string>(item);
 
+        //default multiplication factor set to one
         all.disp_mult = 1.0;
 
     }
 
     ListFile.close();
+};
+
+
+void store_calc_parameters(all_t & all, std::string name)
+{
+    std::ofstream output(name.c_str());
+    time_t now = time(0);
+    tm* loc  = localtime(&now);
+
+    output << "calculations have been performed on:  " << std::endl;
+    output << std::endl;
+    output << asctime(loc) << std::endl;
+    output << "the following parameters have been inputed:  " << std::endl;
+    output << std::endl;
+
+    output << "Model properties" << std::endl;
+    output << std::endl;
+    output << "delta:         " << all.delta << std::endl;
+    output << "mu:            " << all.mu << std::endl;
+    output << "model:         " << all.model << std::endl;
+    output << std::endl;
+    output << "Iteration parameters" << std::endl;
+    output << std::endl;
+    output << "kT min:        " << all.kT_min << std::endl;
+    output << "kT increment:  " << all.kT_increment << std::endl;
+    output << "kT max:        " << all.kT_max << std::endl;
+    output << "U min:         " << all.U_min << std::endl;
+    output << "U increment:   " << all.U_increment << std::endl;
+    output << "U max:         " << all.U_max << std::endl;
+    output << "x min:         " << all.mu_min << std::endl;
+    output << "x increment:   " << all.mu_increment << std::endl;
+    output << "x max:         " << all.mu_max << std::endl;
+    output << std::endl;
+    output << "Mesh parameter" << std::endl;
+    output << std::endl;
+    output << "xMax:        " << all.x_max << std::endl;
+    output << "n:           " << all.n << std::endl;
+    output << std::endl;
+    output << "physics:  " << all.physics << std::endl;
+
 };
 
