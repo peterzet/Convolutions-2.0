@@ -43,9 +43,16 @@ class raw: public base_array
 
         void init(int, double, double);
 
-        void output(std::string, all_t);
+        //////////////  OUTPUT AWTs  ///////////////////////////
+        void output(std::string, all_t& );
 
-        // set operations
+
+        /////////////// COPY AWTs   //////////////////////////
+        void  copy_all(raw &);
+        void copy_real(raw &);
+        void copy_imag(raw &);
+
+        /////////////// SET AWTs    //////////////////////////
         void set_zero();
         void set_real(double);
         void set_imag(double);
@@ -53,13 +60,10 @@ class raw: public base_array
         void set_FD();
         void set_BE();
         void set_K3();
-        void set_copy(raw &);
 
-
-
-        // operations changing existing values
-
-
+        /////////////// OPERATIONS on AWTs   /////////////////
+        void conjugate_y(raw &);
+        void conjugate_dft(raw &);
 };
 
 #endif // RAWFUNCTION_H
