@@ -22,12 +22,11 @@ class base_array
 {
     protected:
         // parameters of the mesh
-        int n;
-        double xMax;
-        double kT;
+        array_prop_t stat;
+        std::string name;
 
     public:
-        base_array();
+        base_array(std::string, const array_prop_t); //int initTest): test(initTest){};
         ~base_array();
 
         int nn;
@@ -36,8 +35,14 @@ class base_array
         std::complex<double> * y;      // array of function values
         std::complex<double> * yDFT;   // DFT of y, DFT means discrete Fourier transform
 
+        // get protected values
+        int get_n();
+        double get_x_max();
+        double get_kT();
+        std::string get_name();
+
         // pure virtual function
-        virtual void init(int, double, double)=0;
+        virtual void init(array_prop_t stat)=0;
 
         // copy functions
         virtual void  copy_all();
@@ -47,7 +52,7 @@ class base_array
 
         virtual void output(std::string, all_t &);
 
-
+        // set functions
         virtual void set_zero() =0;
         virtual void set_real(double) =0;
         virtual void set_imag(double) =0;

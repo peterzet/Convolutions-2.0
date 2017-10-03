@@ -19,14 +19,17 @@
 
 
 
-base_array::base_array()
+base_array::base_array(std::string initName, const array_prop_t initStat) //(int initTest): test(initTest)
 {
     #ifdef CALL
         std::cout << "Constructor of virtual base" << std::endl;
     #endif // OLD
+
+    stat = initStat;
+    name = initName;
 }
 
-void base_array::init(int _n, double _xMax, double _kT)
+void base_array::init(array_prop_t stat)
 {
     std::cout << "Call from virtual base class base_array: no implementation of initialize" << std::endl;
 }
@@ -44,6 +47,30 @@ base_array::~base_array()
 void base_array::output(std::string name, all_t & all)
 {
     std::cout << "Call from virtual base class base_array: no implementation of output" << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////                                     GET PROTECTED                                               ////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int base_array::get_n()
+{
+    return stat.n;
+}
+
+double base_array::get_x_max()
+{
+    return stat.x_max;
+}
+
+double base_array::get_kT()
+{
+    return stat.kT;
+}
+
+std::string base_array::get_name()
+{
+    return name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,9 +145,5 @@ void base_array::copy_imag()
 
 void base_array::print_stat()
 {
-    std::cout << "n is: " << n << " nn is: " << nn <<  " xMax is: " << xMax <<  " kT is: " << kT << std::endl;
+    std::cout << "n is: " << stat.n << " nn is: " << nn <<  " xMax is: " << stat.x_max <<  " kT is: " << stat.kT << std::endl;
 }
-
-
-
-
