@@ -18,24 +18,23 @@
 
 
 
-
-raw::raw()
+raw::raw(std::string initName, const array_prop_t initStat): base_array(initName, initStat)
 {
     #ifdef CALL
-        std::cout << "constructing raw" << std::endl;
+        std::cout << "constructing raw " << name << std::endl;
     #endif // OLD
 
-    init(0, 0, 0);
+    init(initStat);
 }
 
 
-void raw::init(int _n, double _xMax, double _kT)
+void raw::init(array_prop_t _stat)
 {
     // these are the basic para,eters of the function
-    n    = _n;                  // 2*n + 1 is the number of the mesh points
-    nn   = 2 * n + 1;
-    xMax = _xMax;               // <-xMax, xMax> is the interval on which the function is defined
-    kT = _kT;
+    stat.n    = _stat.n;                  // 2*n + 1 is the number of the mesh points
+    nn   = 2 * _stat.n + 1;
+    stat.x_max = _stat.x_max;               // <-xMax, xMax> is the interval on which the function is defined
+    stat.kT = _stat.kT;
 
     y    = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
     yDFT = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
@@ -45,15 +44,12 @@ void raw::init(int _n, double _xMax, double _kT)
     std::complex<double> u(0,0);
     for(int i=0; i < nn; i++)    y[i] = u;
 
-    #ifdef CALL
-        std::cout << "initializing raw" << std::endl;
-    #endif // OLD
 }
 
 raw::~raw()
 {
     #ifdef CALL
-        std::cout << "destructing raw" << std::endl;
+        std::cout << "destructing raw " << name << std::endl;
     #endif // OLD
 }
 
@@ -74,22 +70,26 @@ void raw::output(std::string name, all_t & all)
         output.open(name);
     #endif // CX11
 
+    int nn           = 4*all.n + 4;
+    int n = all.n;
+    double x_max = all.x_max;
+    double disp_mult = all.disp_mult;
 
     // counter to ensure that writting was successful
     int control = 0;
 
-    // x coordinate of maximum range is calculated
-    int limit = all.n * all.disp_range / all.x_max;
+    // n coordinate of maximum range is calculated
+    int limit = n * all.disp_range / x_max;
 
 
     // output of y values in the form of a function is selected
     if(all.output_mode == "raw")
     {
-        for(int i = 0; i < nn; i++)
+        for(int i = limit; i < nn-limit; i++)
         {
-              output << (i-n)* all.x_max/n << "  "
-                   << all.disp_mult * real(yDFT[i]) << "  "
-                   << all.disp_mult * imag(yDFT[i]) << "  "
+              output << (i-n)* x_max/n << "  "
+                   << disp_mult * real(yDFT[i]) << "  "
+                   << disp_mult * imag(yDFT[i]) << "  "
                    << std::endl;
         }
         control += 1;
@@ -157,13 +157,13 @@ void raw::copy_all(raw & inX)
 {
     // checking if mesh properties are the same
     int compatibility = 1;
-    if(n != inX.n)
+    if(stat.n != inX.stat.n)
     {
         std::cerr << "cannot copy raw to another raw: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
-    if(xMax != inX.xMax)
+    if(stat.x_max != inX.stat.x_max)
     {
         std::cerr << "cannot copy raw to another raw: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
@@ -171,7 +171,7 @@ void raw::copy_all(raw & inX)
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the raw!" << std::endl;
+        std::cout << "Calculation corrupted, could not copy the raw " << inX.name << "!"<< std::endl;
         exit(1);
     }
 
@@ -185,13 +185,13 @@ void raw::copy_real(raw & inX)
 {
     // checking if mesh properties are the same
     int compatibility = 1;
-    if(n != inX.n)
+    if(stat.n != inX.stat.n)
     {
         std::cerr << "cannot copy raw to another raw: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
-    if(xMax != inX.xMax)
+    if(stat.x_max != inX.stat.x_max)
     {
         std::cerr << "cannot copy raw to another raw: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
@@ -199,7 +199,7 @@ void raw::copy_real(raw & inX)
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the raw!" << std::endl;
+        std::cout << "Calculation corrupted, could not copy the raw " << inX.name << "!"<< std::endl;
         exit(1);
     }
 
@@ -217,13 +217,13 @@ void raw::copy_imag(raw & inX)
 {
         // checking if mesh properties are the same
     int compatibility = 1;
-    if(n != inX.n)
+    if(stat.n != inX.stat.n)
     {
         std::cerr << "cannot copy raw to another raw: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
-    if(xMax != inX.xMax)
+    if(stat.x_max != inX.stat.x_max)
     {
         std::cerr << "cannot copy raw to another raw: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
@@ -231,7 +231,7 @@ void raw::copy_imag(raw & inX)
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the raw!" << std::endl;
+        std::cout << "Calculation corrupted, could not copy the raw " << inX.name << "!"<< std::endl;
         exit(1);
     }
 
@@ -272,6 +272,10 @@ void raw::set_imag(double numb)
 // The initializer of FERMI-DIRAC distribution
 void raw::set_FD()
 {
+    int n =stat.n;
+    double kT = stat.kT;
+    double xMax = stat.x_max;
+
     if( kT == 0 )
     {
         for(int i=0;     i<n;   i++)     y[i] = 1.0;
@@ -290,6 +294,10 @@ void raw::set_FD()
 // The initializer of BOSE-EINSTEIN distribution
 void raw::set_BE()
 {
+    int n =stat.n;
+    double kT = stat.kT;
+    double xMax = stat.x_max;
+
     if( kT == 0 )
     {
         for(int i=0;     i<n;   i++)     y[i] = 1.0;

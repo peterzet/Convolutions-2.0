@@ -31,17 +31,14 @@
 
 class raw: public base_array
 {
-    protected:
-
-
 
 
     public:
-        raw();
+        raw(std::string, const array_prop_t);
         ~raw();
 
 
-        void init(int, double, double);
+        void init(array_prop_t);
 
         //////////////  OUTPUT AWTs  ///////////////////////////
         void output(std::string, all_t& );

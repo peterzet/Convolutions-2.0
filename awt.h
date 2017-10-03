@@ -25,8 +25,8 @@
 class AWT: public base_array
 {
     public:
-        AWT();
-        void init(int,double,double);     // function to actually construct the object class
+        AWT(std::string, const array_prop_t);
+        void init(array_prop_t stat);     // function to actually construct the object class
 
         ~AWT();                                    // deconstructor of the class object
 
