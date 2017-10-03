@@ -5,6 +5,10 @@
 #include "awt.h"
 #include "aux.h"
 
+
+//#include "play.h"
+#include "game.h"
+
 /*
 #include "Calculator.h"
 #include "physics.h"
@@ -46,49 +50,37 @@
 
 int main()
 {
+
     // the name of the file to import desired definitions and values
-    std::string name = "input";
     all_t params;
-    initialize_parameters(params, name);
+    initialize_parameters(params, "input");
+    store_calc_parameters(params, "calc");
 
-    std::cout << params.n << std::endl;
-
-    AWT A;
-    A.init(params.n,params.x_max,params.kT_min);
-    A.conjugate_y(A);
-    A.set_imag(1.0);
-    A.conjugate_y(A);
+    // properties array
+    array_prop_t stat;
+    stat.set_prop_t(10, 1, 0);
+    stat.set_prop_all(params);
 
 
-    AWT AA;
-    AA.init(2,2,params.kT_min);
-    AA.set_copy(A);
+    // actual working area
+    AWT A("A", stat);
 
+    std::cout << A.get_name() << std::endl;
+    std::cout << A.get_n() << std::endl;
+    std::cout << A.get_x_max() << std::endl;
+    std::cout << A.get_kT() << std::endl;
 
+    std::cout << "first copy attempt!" << std::endl;
+    AWT B("B", stat);
 
-    raw B;
-    B.init(10,2,0);
-    B.conjugate_y();
+    std::cout << B.get_name() << std::endl;
+    std::cout << B.get_n() << std::endl;
+    std::cout << B.get_x_max() << std::endl;
+    std::cout << B.get_kT() << std::endl;
 
-    // function that imports all the desired initial definitions and values
-    //import_initial(name, all);
+    B.copy_all(A);
 
-
-
-
-    //AWT test;
-    //test.init(1000,10,0);
-    //test.set_FD();
-
-
-    std::string callme;
-    callme = "FD";
-
-
-    //all.mult = 1.0;
-    //test.output(callme, all);
-
-
+    raw C("C", stat);
 
 
 
