@@ -10,7 +10,6 @@
 #include <cassert>          // error handling library, function assert to terminate the program
 
 
-
 void initialize_parameters(all_t & all, std::string name)
 {
 
