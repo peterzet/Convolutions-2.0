@@ -20,18 +20,20 @@
 
 
 
-class aux: public AWT
+class aux
 {
     public:
         aux();
         ~aux();
 
+        /*
         AWT aux1;
         AWT aux2;
         AWT aux3;
         AWT aux4;
         AWT aux5;
         AWT aux6;
+        */
 
 
         void initialize_aux(int, double, double);

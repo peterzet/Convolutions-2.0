@@ -24,6 +24,7 @@ aux::aux()
 
 void aux::initialize_aux(int n, double xMax, double kT)
 {
+    /*
     aux1.init(n, xMax, kT);
     aux2.init(n, xMax, kT);
     aux3.init(n, xMax, kT);
@@ -37,7 +38,7 @@ void aux::initialize_aux(int n, double xMax, double kT)
     aux4.set_zero();
     aux5.set_zero();
     aux6.set_zero();
-
+    */
 }
 
 aux::~aux()
