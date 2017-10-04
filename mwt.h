@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 //
-//      awt is an array class to store function periodically
+//      mwt is an array class to store matrices periodically
 //
 //      0th element contains value of the function at 0
 //      sequentially positive domain of the function is stored
@@ -14,8 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef AWT_H
-#define AWT_H
+#ifndef MWT_H
+#define MWT_H
 
 #include "global.h"
 #include "raw.h"
@@ -36,16 +36,16 @@
 
 
 
-//// Acronym AWT stands for ArrayWithTails
+//// Acronym MWT stands for ArrayWithTails
 
-class AWT: public base_array
+class MWT: public base_array
 {
     protected:
         void init();     // function to actually construct the object class
 
     public:
-        AWT(std::string, const array_prop_t);     // constructor of the class
-        ~AWT();                                   // deconstructor of the class object
+        MWT(std::string, const array_prop_t);     // constructor of the class
+        ~MWT();                                   // deconstructor of the class object
 
 
         ////////////////  FOURIER TRANSFORMs  ////////////////////////////////////////////
@@ -57,15 +57,15 @@ class AWT: public base_array
         void backwardDFT();       // constructor of an empty function backwardDFT
 
 
-        //////////////  OUTPUT AWTs  ///////////////////////////
+        //////////////  OUTPUT MWTs  ///////////////////////////
         void output(std::string, all_t& );
 
-        /////////////// COPY AWTs   //////////////////////////
-        void  copy_all(AWT &);
-        void copy_real(AWT &);
-        void copy_imag(AWT &);
+        /////////////// COPY MWTs   //////////////////////////
+        void  copy_all(MWT &);
+        void copy_real(MWT &);
+        void copy_imag(MWT &);
 
-        /////////////// SET AWTs    //////////////////////////
+        /////////////// SET MWTs    //////////////////////////
         void set_zero();
         void set_real(double);
         void set_imag(double);
@@ -74,9 +74,10 @@ class AWT: public base_array
         void set_BE();
         void set_K3();
 
-        /////////////// OPERATIONS on AWTs   /////////////////
-        void conjugate_y(AWT &);
-        void conjugate_dft(AWT &);
+        /////////////// OPERATIONS on MWTs   /////////////////
+        void conjugate_y(MWT &);
+        void conjugate_dft(MWT &);
 };
 
-#endif // AWT_H
+#endif // MWT_H
+

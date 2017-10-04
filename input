@@ -29,5 +29,5 @@ display:       1
 range:         10 
 print mode:    no 
 string mode:   cx11
-output mode:   raw
+output mode:   ra
 physics:       EFF_freq

@@ -1,7 +1,7 @@
 #ifndef BASE_H
 #define BASE_H
 
-#include "Constants.h"
+#include "global.h"
 
 #include <iostream>         // standard library for reading inputs
 #include <fstream>          // standard library for showing outputs
@@ -22,7 +22,7 @@ class base_array
 {
     protected:
         // parameters of the mesh
-        array_prop_t stat;
+        const array_prop_t stat;
         std::string name;
 
     public:
@@ -41,8 +41,6 @@ class base_array
         double get_kT();
         std::string get_name();
 
-        // pure virtual function
-        virtual void init(array_prop_t stat)=0;
 
         // copy functions
         virtual void  copy_all();
@@ -53,13 +51,13 @@ class base_array
         virtual void output(std::string, all_t &);
 
         // set functions
-        virtual void set_zero() =0;
+        virtual void set_zero()       =0;
         virtual void set_real(double) =0;
         virtual void set_imag(double) =0;
 
         virtual void set_FD() =0;
         virtual void set_BE() =0;
-        virtual void set_K3()=0;
+        virtual void set_K3() =0;
 
         // operations on arrays that change these
         virtual void conjugate_y();

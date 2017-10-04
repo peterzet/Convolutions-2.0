@@ -24,30 +24,22 @@ raw::raw(std::string initName, const array_prop_t initStat): base_array(initName
         std::cout << "constructing raw " << name << std::endl;
     #endif // OLD
 
-    init(initStat);
-}
+    nn   = 2 * stat.n + 1;
 
-
-void raw::init(array_prop_t _stat)
-{
-    // these are the basic para,eters of the function
-    stat.n    = _stat.n;                  // 2*n + 1 is the number of the mesh points
-    nn   = 2 * _stat.n + 1;
-    stat.x_max = _stat.x_max;               // <-xMax, xMax> is the interval on which the function is defined
-    stat.kT = _stat.kT;
-
-    y    = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
-    yDFT = (std::complex<double> *) malloc(nn * sizeof(std::complex<double>));
-
+    y    = new std::complex<double>[nn];
+    yDFT = new std::complex<double>[nn];
 
     // we always initialize the function as constant zero
     std::complex<double> u(0,0);
     for(int i=0; i < nn; i++)    y[i] = u;
-
 }
+
 
 raw::~raw()
 {
+    delete [] y;
+    delete [] yDFT;
+
     #ifdef CALL
         std::cout << "destructing raw " << name << std::endl;
     #endif // OLD
@@ -70,7 +62,7 @@ void raw::output(std::string name, all_t & all)
         output.open(name);
     #endif // CX11
 
-    int nn           = 4*all.n + 4;
+    int nn = 4*all.n + 4;
     int n = all.n;
     double x_max = all.x_max;
     double disp_mult = all.disp_mult;
@@ -159,13 +151,13 @@ void raw::copy_all(raw & inX)
     int compatibility = 1;
     if(stat.n != inX.stat.n)
     {
-        std::cerr << "cannot copy raw to another raw: incompatible number of mesh points!" << std::endl;
+        std::cerr << "cannot copy raw: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
     if(stat.x_max != inX.stat.x_max)
     {
-        std::cerr << "cannot copy raw to another raw: incompatible range of the functions!" << std::endl;
+        std::cerr << "cannot copy raw: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
     }
 
@@ -315,7 +307,7 @@ void raw::set_BE()
 // Kernel3 for KRAMMERS KRONIG
 void raw::set_K3()
 {
-
+    std::cout << "will be done" << std::endl;
 }
 
 

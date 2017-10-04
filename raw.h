@@ -11,7 +11,7 @@
 #ifndef RAWFUNCTION_H
 #define RAWFUNCTION_H
 
-#include "Constants.h"
+#include "global.h"
 #include "base.h"
 
 #include <iostream>         // standard library for reading inputs
@@ -31,18 +31,12 @@
 
 class raw: public base_array
 {
-
-
     public:
         raw(std::string, const array_prop_t);
         ~raw();
 
-
-        void init(array_prop_t);
-
         //////////////  OUTPUT AWTs  ///////////////////////////
         void output(std::string, all_t& );
-
 
         /////////////// COPY AWTs   //////////////////////////
         void  copy_all(raw &);

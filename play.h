@@ -1,9 +1,8 @@
-#ifndef AUX_H
-#define AUX_H
+#ifndef play_H
+#define play_H
 
 #include "global.h"
-#include "raw.h"
-#include "awt.h"
+#include "play.h"
 
 #include <iostream>         // standard library for reading inputs
 #include <fstream>          // standard library for showing outputs
@@ -20,25 +19,28 @@
 
 
 
-class aux
+class play
 {
+    private:
+        char *data;
+
+
+
     public:
-        aux();
-        ~aux();
 
-        /*
-        AWT aux1;
-        AWT aux2;
-        AWT aux3;
-        AWT aux4;
-        AWT aux5;
-        AWT aux6;
-        */
+        play(const char *value = 0);
+        ~play();
 
+        std::string get_data();
 
-        void initialize_aux(int, double, double);
+        int get_length();
 
+        char** get_ptr();
+
+        int compare(play &);
 
 };
 
-#endif // AUX_H
+#endif // play_H
+
+

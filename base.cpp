@@ -19,20 +19,14 @@
 
 
 
-base_array::base_array(std::string initName, const array_prop_t initStat) //(int initTest): test(initTest)
+base_array::base_array(std::string initName, const array_prop_t initStat): name(initName), stat(initStat) //(int initTest): test(initTest)
 {
     #ifdef CALL
         std::cout << "Constructor of virtual base" << std::endl;
     #endif // OLD
-
-    stat = initStat;
-    name = initName;
 }
 
-void base_array::init(array_prop_t stat)
-{
-    std::cout << "Call from virtual base class base_array: no implementation of initialize" << std::endl;
-}
+
 
 base_array::~base_array()
 {

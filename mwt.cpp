@@ -1,4 +1,4 @@
-#include "awt.h"
+#include "mwt.h"
 
 #include "global.h"
 
@@ -21,14 +21,14 @@
 
 
 
-// Formal constructor of AWT
-AWT::AWT(std::string initName, const array_prop_t initStat): base_array(initName, initStat)
+// Formal constructor of MWT
+MWT::MWT(std::string initName, const array_prop_t initStat): base_array(initName, initStat)
 {
     #ifdef CALL
-        std::cout << "constructing AWT " << initName << std::endl;
+        std::cout << "constructing MWT " << initName << std::endl;
     #endif // OLD
 
-    nn   = 4 * stat.n  + 4;      // nn is the size of the complete AWT array
+    nn   = 4 * stat.n  + 4;      // nn is the size of the complete MWT array
 
     // data is allocated for y in the heap, the argument of fftw_malloc defines the size of the input array as nn = 4*n +4
     y = (std::complex<double> *) fftw_malloc(nn * sizeof(std::complex<double>));
@@ -36,7 +36,7 @@ AWT::AWT(std::string initName, const array_prop_t initStat): base_array(initName
     // this informs you whenever there is no space to store y
     if(y == NULL)
     {
-        std::cerr << "insufficient memory to create y array for AWT " << name << " !" << std::endl;  // std::cerr
+        std::cerr << "insufficient memory to create y array for MWT " << name << " !" << std::endl;  // std::cerr
         exit(1);
     }
 
@@ -46,7 +46,7 @@ AWT::AWT(std::string initName, const array_prop_t initStat): base_array(initName
     // this informs you whenever there is no space to store yDFT
     if(yINTER == NULL)
     {
-        std::cerr << "insufficient memory to create yDFT array for AWT " << name << " !" << std::endl;
+        std::cerr << "insufficient memory to create yDFT array for MWT " << name << " !" << std::endl;
         exit(1);
     }
 
@@ -66,8 +66,8 @@ AWT::AWT(std::string initName, const array_prop_t initStat): base_array(initName
 
 
 
-// The destructor of AWT
-AWT::~AWT()
+// The destructor of MWT
+MWT::~MWT()
 {
     fftw_free(y);
     fftw_free(yINTER);
@@ -75,7 +75,7 @@ AWT::~AWT()
     fftw_destroy_plan(backwardFFT);
 
     #ifdef CALL
-        std::cout << "destructing AWT " << name << std::endl;
+        std::cout << "destructing MWT " << name << std::endl;
     #endif // OLD
 }
 
@@ -84,7 +84,7 @@ AWT::~AWT()
 ////////////////////////////////////////////////////////////////////////
 
 // Forward and Backward discrete Fourier transform
-void AWT::forwardDFT()
+void MWT::forwardDFT()
 {
     if(dftKnown)
     return;
@@ -92,7 +92,7 @@ void AWT::forwardDFT()
     dftKnown = true;
 }
 
-void AWT::backwardDFT()
+void MWT::backwardDFT()
 {
     int n = stat.n;
 
@@ -106,9 +106,9 @@ void AWT::backwardDFT()
 }
 
 //////////////////////////////////////////////////////////////////////
-/////////////            OUTPUT AWTs           //////////////////////
+/////////////            OUTPUT MWTs           //////////////////////
 ////////////////////////////////////////////////////////////////////
-void AWT::output(std::string name, all_t & all)
+void MWT::output(std::string name, all_t & all)
 {
     // output stream file is open according to old standard
     #ifdef OLD
@@ -154,10 +154,10 @@ void AWT::output(std::string name, all_t & all)
         control += 1;
     }
 
-    // output of y values in the AWT form is selected
-    if(all.output_mode == "awt")
+    // output of y values in the MWT form is selected
+    if(all.output_mode == "MWT")
     {
-        // the whole AWT with zero padding is outputed
+        // the whole MWT with zero padding is outputed
         for(int i = 0;   i<nn;     i += all.disp_range)
         {
             output << i << "  "
@@ -199,30 +199,30 @@ void AWT::output(std::string name, all_t & all)
 }
 
 //////////////////////////////////////////////////////////////////////
-/////////////              COPY AWTs            /////////////////////
+/////////////              COPY MWTs            /////////////////////
 ////////////////////////////////////////////////////////////////////
 
 // the array is filled with std::complex zero
 
-void AWT::copy_all(AWT & inX)
+void MWT::copy_all(MWT & inX)
 {
     // checking if mesh properties are the same
     int compatibility = 1;
     if(stat.n != inX.stat.n)
     {
-        std::cerr << "cannot set AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        std::cerr << "cannot set MWT to another MWT: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
     if(stat.x_max != inX.stat.x_max)
     {
-        std::cerr << "cannot set AWT to another AWT: incompatible range of the functions!" << std::endl;
+        std::cerr << "cannot set MWT to another MWT: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
     }
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the AWT " << inX.name << " to " << name << "!"<< std::endl;
+        std::cout << "Calculation corrupted, could not copy the MWT " << inX.name << " to " << name << "!"<< std::endl;
         exit(1);
     }
 
@@ -232,25 +232,25 @@ void AWT::copy_all(AWT & inX)
 }
 
 // real part is copied
-void AWT::copy_real(AWT & inX)
+void MWT::copy_real(MWT & inX)
 {
         // checking if mesh properties are the same
     int compatibility = 1;
     if(stat.n != inX.stat.n)
     {
-        std::cerr << "cannot copy AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        std::cerr << "cannot copy MWT to another MWT: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
     if(stat.x_max != inX.stat.x_max)
     {
-        std::cerr << "cannot copy AWT to another AWT: incompatible range of the functions!" << std::endl;
+        std::cerr << "cannot copy MWT to another MWT: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
     }
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the AWT " << inX.name << " to " << name << "!"<< std::endl;
+        std::cout << "Calculation corrupted, could not copy the MWT " << inX.name << " to " << name << "!"<< std::endl;
         exit(1);
     }
 
@@ -264,25 +264,25 @@ void AWT::copy_real(AWT & inX)
 }
 
 // imag part is copied
-void AWT::copy_imag(AWT & inX)
+void MWT::copy_imag(MWT & inX)
 {
         // checking if mesh properties are the same
     int compatibility = 1;
     if(stat.n != inX.stat.n)
     {
-        std::cerr << "cannot copy AWT to another AWT: incompatible number of mesh points!" << std::endl;
+        std::cerr << "cannot copy MWT to another MWT: incompatible number of mesh points!" << std::endl;
         compatibility -= 1;
     }
 
     if(stat.x_max != inX.stat.x_max)
     {
-        std::cerr << "cannot copy AWT to another AWT: incompatible range of the functions!" << std::endl;
+        std::cerr << "cannot copy MWT to another MWT: incompatible range of the functions!" << std::endl;
         compatibility -= 1;
     }
 
     if(compatibility != 1)
     {
-        std::cout << "Calculation corrupted, could not copy the AWT " << inX.name << " to " << name << "!"<< std::endl;
+        std::cout << "Calculation corrupted, could not copy the MWT " << inX.name << " to " << name << "!"<< std::endl;
         exit(1);
     }
 
@@ -296,17 +296,17 @@ void AWT::copy_imag(AWT & inX)
 }
 
 //////////////////////////////////////////////////////////////////////
-/////////////              SET AWTs            //////////////////////
+/////////////              SET MWTs            //////////////////////
 ////////////////////////////////////////////////////////////////////
 
 // the array is filled with std::complex zero
-void AWT::set_zero()
+void MWT::set_zero()
 {
     std::complex<double> u(0,0);
     for(int i=0; i<nn; i++)         y[i] = u;
 }
 
-void AWT::set_real(double numb)
+void MWT::set_real(double numb)
 {
     int n =stat.n;
 
@@ -317,7 +317,7 @@ void AWT::set_real(double numb)
 
 }
 
-void AWT::set_imag(double numb)
+void MWT::set_imag(double numb)
 {
     int n =stat.n;
 
@@ -328,7 +328,7 @@ void AWT::set_imag(double numb)
 }
 
 // FERMI-DIRAC distribution
-void AWT::set_FD()
+void MWT::set_FD()
 {
     int n =stat.n;
     double kT = stat.kT;
@@ -350,7 +350,7 @@ void AWT::set_FD()
 }
 
 // BOSE-EINSTEIN distribution
-void AWT::set_BE()
+void MWT::set_BE()
 {
     int n =stat.n;
     double kT = stat.kT;
@@ -373,7 +373,7 @@ void AWT::set_BE()
 }
 
 // Kernel3 for KRAMMERS KRONIG
-void AWT::set_K3()
+void MWT::set_K3()
 {
     int n =stat.n;
     double kT = stat.kT;
@@ -407,7 +407,7 @@ void AWT::set_K3()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////                               FUNCTIONS CHANGING ARRAYS                                         ////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void AWT::conjugate_y(AWT & inX)
+void MWT::conjugate_y(MWT & inX)
 {
     int n =stat.n;
 
@@ -416,7 +416,7 @@ void AWT::conjugate_y(AWT & inX)
     for(int i = 3*n+4;  i<nn;   i++)      y[i]  =  conj(inX.y[i]);
 }
 
-void AWT::conjugate_dft(AWT & inX)
+void MWT::conjugate_dft(MWT & inX)
 {
     int n =stat.n;
 
@@ -424,5 +424,6 @@ void AWT::conjugate_dft(AWT & inX)
     for(int i = 0;      i<n;    i++)      yDFT[i]  =  conj(inX.yDFT[i]);
     for(int i = 3*n+4;  i<nn;   i++)      yDFT[i]  =  conj(inX.yDFT[i]);
 }
+
 
 

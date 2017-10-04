@@ -1,44 +1,51 @@
-#ifndef AUX_H
-#define AUX_H
+#include "game.h"
 
 #include "global.h"
-#include "raw.h"
-#include "awt.h"
+
+#include <string>           // standard library for manipultaing std::strings
+#include <vector>
+#include <complex>          // implements the std::complex class to contain std::complex numbers in cartesian form
+
 
 #include <iostream>         // standard library for reading inputs
 #include <fstream>          // standard library for showing outputs
-#include <string>           // standard library for manipultaing strings
 #include <cassert>          // error handling library, function assert to terminate the program
 
-#include <vector>
-#include <complex>          // implements the complex class to contain complex numbers in cartesian form
 #include <fftw3.h>          // FFTW library
 #include <cmath>            // declares some common mathematical operations and transformation
 #include <cstdlib>          // several general purpose functions, including dynamic memory management,
                             // random number generation, communication with the environment,
                             // integer arithmetics, searching, sorting and converting
+#include <stdlib.h>
+
+
+////////////////    SELECTING FFTW algorithm     /////////////////
 
 
 
-class aux
+
+
+// Formal constructor of game
+game::game(array_prop_t initStat)
 {
-    public:
-        aux();
-        ~aux();
+    #ifdef CALL
+        std::cout << "constructing game" << std::endl;
+    #endif // OLD
 
-        /*
-        AWT aux1;
-        AWT aux2;
-        AWT aux3;
-        AWT aux4;
-        AWT aux5;
-        AWT aux6;
-        */
+    init(initStat);
+}
+
+// The destructor of game
+game::~game()
+{
+
+    #ifdef CALL
+        std::cout << "destructing game" << std::endl;
+    #endif // OLD
+}
+
+void game::init(array_prop_t& _stat)
+{
 
 
-        void initialize_aux(int, double, double);
-
-
-};
-
-#endif // AUX_H
+}

@@ -1,9 +1,8 @@
-#ifndef AUX_H
-#define AUX_H
+#ifndef game_H
+#define game_H
 
 #include "global.h"
-#include "raw.h"
-#include "awt.h"
+#include "play.h"
 
 #include <iostream>         // standard library for reading inputs
 #include <fstream>          // standard library for showing outputs
@@ -20,25 +19,26 @@
 
 
 
-class aux
+class game
 {
+
     public:
-        aux();
-        ~aux();
+        game(array_prop_t);
+        ~game();
 
-        /*
-        AWT aux1;
-        AWT aux2;
-        AWT aux3;
-        AWT aux4;
-        AWT aux5;
-        AWT aux6;
-        */
+        int nn;
+        bool dftKnown;
 
+        int get_n();
+        double get_xMax();
+        double get_kT();
+        std::string get_name();
 
-        void initialize_aux(int, double, double);
+        void init(array_prop_t&);
 
 
 };
 
-#endif // AUX_H
+#endif // game_H
+
+
